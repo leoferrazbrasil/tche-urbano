@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tchê Urbano | Experiências, Gastronomia e Ofertas com Resgate no WhatsApp</title>
+    <meta name="description" content="Descubra os melhores restaurantes, pizzarias, fondues e atrações no Rio Grande do Sul (Porto Alegre, Gramado e Canela) com descontos exclusivos e resgate imediato via WhatsApp.">
+    <meta name="keywords" content="Tchê Urbano, ofertas Porto Alegre, descontos Gramado, fondue Canela, cupons RS, restaurantes POA">
+    
+    <!-- Open Graph / Meta Social -->
+    <meta property="og:title" content="Tchê Urbano | Seu Clube de Experiências pelo WhatsApp">
+    <meta property="og:description" content="Acesse descontos de até 50% nos melhores lugares do RS sem cadastros demorados. Resgate direto pelo WhatsApp!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.tcheurbano.com.br">
+    
+    <!-- Tipografia oficial da marca (Aleo, self-hosted via @font-face em styles.css) -->
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="brand-logo">
+                <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
+                <span class="badge-beta">VIP</span>
+            </a>
+
+            <div class="nav-location">
+                <i class="fa-solid fa-location-dot"></i>
+                <select id="citySelect" class="city-selector">
+                    <option value="all">Todas as Cidades</option>
+                    <option value="poa" selected>Porto Alegre</option>
+                    <option value="gramado">Gramado & Canela</option>
+                    <option value="litoral">Litoral Gaúcho</option>
+                </select>
+            </div>
+
+            <div class="nav-actions">
+                <a href="https://wa.me/5551992568861?text=Vim%20pelo%20site%20Tch%C3%AA%20Urbano!%20Quero%20entrar%20no%20Clube%20VIP." target="_blank" class="btn btn-whatsapp-header">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Clube VIP</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-container">
+            <div class="hero-badge">
+                <i class="fa-solid fa-bolt"></i> Resgate em 30 Segundos pelo WhatsApp • Sem Cadastros Lentos
+            </div>
+            <h1 class="hero-title">
+                As melhores experiências do RS <br>
+                <span class="text-gradient">pelo menor preço da cidade.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Restaurantes renomados, pizzarias temáticas, fondues e parques com até <strong>50% OFF</strong>. Escolha a experiência e receba o QR Code direto no seu WhatsApp.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Busque por restaurante, prato (ex: Fondue, Pizza, Sushi)...">
+                <button class="btn btn-primary btn-search" onclick="filterOffers()">Buscar</button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-num">50+</span>
+                    <span class="stat-label">Lugares Selecionados</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">100%</span>
+                    <span class="stat-label">Resgate Conversacional</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">⭐ 4.9</span>
+                    <span class="stat-label">Avaliação dos Membros</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter Bar -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="categories-scroll" id="categoryBar">
+                <button class="cat-pill active" data-cat="all">
+                    <i class="fa-solid fa-border-all"></i> Todas
+                </button>
+                <button class="cat-pill" data-cat="pizzaria">
+                    <i class="fa-solid fa-pizza-slice"></i> Pizzarias
+                </button>
+                <button class="cat-pill" data-cat="fondue">
+                    <i class="fa-solid fa-cheese"></i> Fondues & Sequências
+                </button>
+                <button class="cat-pill" data-cat="hamburguer">
+                    <i class="fa-solid fa-burger"></i> Hambúrgueres
+                </button>
+                <button class="cat-pill" data-cat="parques">
+                    <i class="fa-solid fa-ticket"></i> Parques & Atrações
+                </button>
+                <button class="cat-pill" data-cat="cafe">
+                    <i class="fa-solid fa-mug-hot"></i> Cafés & Docerias
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offers Grid Section -->
+    <section class="offers-section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Experiências em Destaque</h2>
+                    <p class="section-desc">Curadoria exclusiva dos melhores estabelecimentos do bairro</p>
+                </div>
+                <div class="sort-wrapper">
+                    <label for="sortSelect">Ordenar por:</label>
+                    <select id="sortSelect" onchange="sortOffers()">
+                        <option value="popular">Mais Populares</option>
+                        <option value="discount">Maior Desconto</option>
+                        <option value="price-low">Menor Preço</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Offers Container (Dynamic Render via JS) -->
+            <div class="offers-grid" id="offersGrid">
+                <!-- Javascript will render offer cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title text-center">Como Funciona o Tchê Urbano</h2>
+            <p class="section-desc text-center">Simplicidade extrema para você economizar em 3 passos</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-compass"></i></div>
+                    <h3>1. Escolha a Experiência</h3>
+                    <p>Navegue pelo nosso site próprio e encontre os melhores achados gastronômicos da cidade.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                    <h3>2. Resgate pelo WhatsApp</h3>
+                    <p>Clique no botão de resgate. Nosso bot no WhatsApp gera seu voucher e QR Code em 30 segundos.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-utensils"></i></div>
+                    <h3>3. Aproveite no Salão</h3>
+                    <p>Apresente o QR Code no celular ao garçom/atendente e aproveite seu desconto exclusivo sem burocracia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- B2B Merchant Banner Section -->
+    <section class="b2b-banner">
+        <div class="container b2b-container">
+            <div class="b2b-content">
+                <span class="b2b-tag">Para Donos de Negócios Locais</span>
+                <h2>Preencha as mesas ociosas do seu restaurante sem gastar R$ 1 em anúncios.</h2>
+                <p>Anuncie sua casa na plataforma oficial Tchê Urbano. Trabalhamos com o modelo Parceiro Fundador de risco zero. Nós geramos o tráfego e entregamos clientes no seu salão.</p>
+                <a href="https://wa.me/5551992568861?text=Vim%20pelo%20site%20Tch%C3%AA%20Urbano!%20Tenho%20um%20restaurante%20e%20quero%20ser%20Parceiro%20Fundador." target="_blank" class="btn btn-b2b">
+                    <i class="fa-solid fa-handshake"></i> Quero Ser Parceiro Fundador
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-col">
+                <a href="#" class="brand-logo footer-logo">
+                    <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
+                </a>
+                <p class="footer-text">O seu clube conversacional de experiências locais no Rio Grande do Sul. O melhor da cidade ao seu alcance.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Cidades</h4>
+                <ul>
+                    <li><a href="#">Porto Alegre</a></li>
+                    <li><a href="#">Gramado & Canela</a></li>
+                    <li><a href="#">Bento Gonçalves</a></li>
+                    <li><a href="#">Litoral Gaúcho</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Categorias</h4>
+                <ul>
+                    <li><a href="#">Sequências de Fondue</a></li>
+                    <li><a href="#">Pizzarias Temáticas</a></li>
+                    <li><a href="#">Churrascarias & Galetos</a></li>
+                    <li><a href="#">Parques & Entretenimento</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <p><i class="fa-brands fa-whatsapp"></i> WhatsApp: (51) 99256-8861</p>
+                <p><i class="fa-solid fa-envelope"></i> contato@tcheurbano.com.br</p>
+                <p><i class="fa-solid fa-clock"></i> Seg a Sáb: 09h às 21h</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Tchê Urbano. Todos os direitos reservados. Hospedado na Hostinger.</p>
+        </div>
+    </footer>
+
+    <!-- Offer Modal -->
+    <div id="offerModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-body" id="modalContent">
+                <!-- Rendered dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="app.js"></script>
+</body>
+</html>
