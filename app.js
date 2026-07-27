@@ -93,6 +93,21 @@ const OFFERS_DATA = [
         reviewsCount: 110,
         popular: false,
         whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o Rodízio de Carnes Nobres em POA (R$ 74,90)."
+    },
+    {
+        id: "of-07",
+        title: "Toca da Bruxa Canela | Rodízio de Pizzas Temático (+50 Sabores)",
+        city: "gramado",
+        location: "Gramado & Canela • Centro",
+        category: "pizzaria",
+        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
+        oldPrice: 149.00,
+        newPrice: 94.00,
+        discountPercent: 37,
+        rating: 5.0,
+        reviewsCount: 1,
+        popular: true,
+        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o cupom da Toca da Bruxa Canela (R$ 94,00)."
     }
 ];
 
