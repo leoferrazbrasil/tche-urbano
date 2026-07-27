@@ -255,12 +255,12 @@ function renderOffers() {
                     </div>
                 </div>
 
-                <a href="https://wa.me/5551996737359?text=${encodeURIComponent(item.whatsappText)}"
+                <a href="voucher.html?code=${item.id.toUpperCase()}&m=${encodeURIComponent(item.location)}&t=${encodeURIComponent(item.title)}&old=${item.oldPrice}&new=${item.newPrice}"
                    target="_blank"
                    rel="noopener"
                    class="btn btn-card-resgate"
-                   aria-label="Resgatar cupom para ${item.title} no WhatsApp">
-                    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Resgatar no WhatsApp
+                   aria-label="Resgatar cupom para ${item.title}">
+                    <i class="fa-solid fa-ticket" aria-hidden="true"></i> Resgatar Voucher VIP (QR Code)
                 </a>
             </div>
         </article>
