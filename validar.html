@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de Vouchers | Tchê Urbano - Portal do Parceiro</title>
+    <meta name="description" content="Valide cupons e QR Codes de vouchers do Clube VIP Tchê Urbano no caixa ou salão do restaurante em 2 segundos.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- HTML5 QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .validator-container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+        .validator-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            box-shadow: var(--shadow-card);
+            text-align: center;
+        }
+        .validator-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .validator-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        #reader {
+            width: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px dashed var(--primary);
+            margin-bottom: 20px;
+            background: #000;
+        }
+        .manual-input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .manual-input-box input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .validation-result {
+            display: none;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin-top: 20px;
+            text-align: left;
+            animation: fadeIn 0.3s ease;
+        }
+        .validation-result.valid {
+            display: block;
+            background: #ECFDF5;
+            border: 2px solid #10B981;
+            color: #065F46;
+        }
+        .validation-result.invalid {
+            display: block;
+            background: #FEF2F2;
+            border: 2px solid #EF4444;
+            color: #991B1B;
+        }
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .result-details {
+            list-style: none;
+            font-size: 0.92rem;
+            line-height: 1.8;
+        }
+        .btn-reset {
+            margin-top: 16px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar" role="banner">
+        <div class="container nav-container">
+            <a href="index.html" class="brand-logo" aria-label="Tchê Urbano Página Inicial">
+                <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
+                <span class="badge-beta">LEITOR DE QR CODE</span>
+            </a>
+            <div class="nav-actions">
+                <a href="parceiro.html" class="btn btn-secondary" style="font-size: 0.85rem;">Painel do Parceiro</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="validator-container">
+        <div class="validator-card">
+            <h1 class="validator-title"><i class="fa-solid fa-qrcode"></i> Validar Voucher do Cliente</h1>
+            <p class="validator-desc">Aponta a câmera do celular para o QR Code do cliente ou digite o código do voucher abaixo.</p>
+
+            <!-- Camera QR Scanner Viewport -->
+            <div id="reader"></div>
+            
+            <button type="button" class="btn btn-primary" id="btnToggleCamera" style="width: 100%; margin-bottom: 20px;">
+                <i class="fa-solid fa-camera"></i> Abrir Câmera para Escanear
+            </button>
+
+            <!-- Manual Code Input -->
+            <div class="manual-input-box">
+                <input type="text" id="manualCode" placeholder="Ex: TCHE-BRUXA-94" aria-label="Código do Voucher">
+                <button type="button" class="btn btn-primary" onclick="validateManualCode()">Validar</button>
+            </div>
+
+            <!-- Validation Result Box -->
+            <div class="validation-result" id="resultBox">
+                <div class="result-header" id="resultHeader">
+                    <i class="fa-solid fa-circle-check"></i> <span>VOUCHER VÁLIDO!</span>
+                </div>
+                <ul class="result-details" id="resultDetails">
+                    <!-- Dynamic validation details -->
+                </ul>
+                <button type="button" class="btn btn-secondary btn-reset" onclick="resetScanner()">Validar Outro Voucher</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center" style="padding: 30px 0;">
+        <p>&copy; 2026 Tchê Urbano. Portal de Validação do Comerciante.</p>
+    </footer>
+
+    <!-- Script -->
+    <script src="validar.js"></script>
+</body>
+</html>
