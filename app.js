@@ -240,7 +240,7 @@ function renderOffers() {
                     </div>
                 </div>
 
-                <a href="https://wa.me/5551992568861?text=${encodeURIComponent(item.whatsappText)}"
+                <a href="https://wa.me/5551996737359?text=${encodeURIComponent(item.whatsappText)}"
                    target="_blank"
                    rel="noopener"
                    class="btn btn-card-resgate"
