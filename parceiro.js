@@ -205,30 +205,21 @@ function renderReviewSummary() {
     `;
 }
 
-// Submit Partner Offer via WhatsApp Payload (Safe Unicode Emoji Formatting)
+// Submit Partner Offer via WhatsApp Payload (Direct API Endpoint with Bulletproof Formatting)
 function submitPartnerOffer() {
-    const rocket = "\u{1F680}";
-    const building = "\u{1F3E2}";
-    const pin = "\u{1F4CD}";
-    const phone = "\u{1F4F1}";
-    const pizza = "\u{1F355}";
-    const tag = "\u{1F3F7}";
-    const memo = "\u{1F4DD}";
-    const money = "\u{1F4B0}";
-    const photo = "\u{1F5BC}";
-
-    const message = `${rocket} *NOVO CADASTRO DE PARCEIRO FUNDADOR (TCHÊ URBANO)* ${rocket}\n\n` +
-        `${building} *Estabelecimento:* ${formData.businessName}\n` +
-        `${pin} *Cidade/Endereço:* ${formData.businessCity.toUpperCase()} - ${formData.businessNeighborhood}\n` +
-        `${phone} *WhatsApp do Lojista:* ${formData.businessWhatsapp}\n` +
-        `${pizza} *Categoria:* ${formData.businessCategory}\n\n` +
-        `${tag} *OFERTA:* ${formData.offerTitle}\n` +
-        `${memo} *Descrição:* ${formData.offerDescription}\n` +
-        `${money} *De:* R$ ${parseFloat(formData.oldPrice).toFixed(2)} | *Por:* R$ ${parseFloat(formData.newPrice).toFixed(2)}\n` +
-        `${photo} *Foto:* ${formData.imageUrl}\n\n` +
+    const message = `*NOVO CADASTRO DE PARCEIRO FUNDADOR (TCHÊ URBANO)*\n\n` +
+        `► *Estabelecimento:* ${formData.businessName}\n` +
+        `► *Cidade/Endereço:* ${formData.businessCity.toUpperCase()} - ${formData.businessNeighborhood}\n` +
+        `► *WhatsApp do Lojista:* ${formData.businessWhatsapp}\n` +
+        `► *Categoria:* ${formData.businessCategory}\n\n` +
+        `► *OFERTA:* ${formData.offerTitle}\n` +
+        `► *Descrição:* ${formData.offerDescription}\n` +
+        `► *De:* R$ ${parseFloat(formData.oldPrice).toFixed(2)} | *Por:* R$ ${parseFloat(formData.newPrice).toFixed(2)}\n` +
+        `► *Foto:* ${formData.imageUrl}\n\n` +
         `Solicito ativação do anúncio no Clube VIP!`;
 
-    const whatsappUrl = `https://wa.me/5551996737359?text=${encodeURIComponent(message)}`;
+    // Direct WhatsApp API endpoint (bypasses wa.me redirector double-encoding issue)
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=5551996737359&text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
 }
 
