@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Parceiro | Tchê Urbano - Cadastre seu Estabelecimento e Ofertas</title>
+    <meta name="description" content="Painel simples e rápido para donos de restaurantes e estabelecimentos do RS cadastrarem suas ofertas no Clube VIP Tchê Urbano.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="b2b-dashboard-body">
+
+    <!-- Header / Navbar -->
+    <header class="navbar" role="banner">
+        <div class="container nav-container">
+            <a href="index.html" class="brand-logo" aria-label="Tchê Urbano Página Inicial">
+                <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
+                <span class="badge-beta">PAINEL B2B</span>
+            </a>
+
+            <div class="nav-actions">
+                <a href="https://wa.me/5551996737359?text=Preciso%20de%20ajuda%20para%20cadastrar%20meu%20estabelecimento" target="_blank" rel="noopener" class="btn btn-whatsapp-header">
+                    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                    <span>Suporte ao Parceiro</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Wizard Container -->
+    <main class="wizard-main-section">
+        <div class="container">
+            
+            <div class="wizard-header text-center">
+                <span class="wizard-tag"><i class="fa-solid fa-store"></i> Cadastro de Parceiro Fundador</span>
+                <h1 class="wizard-title">Cadastre seu Estabelecimento e Oferta no RS</h1>
+                <p class="wizard-subtitle">Siga o passo a passo em 4 etapas rápidas para colocar sua oferta em destaque para os membros do Clube VIP.</p>
+            </div>
+
+            <!-- Stepper Progress Bar -->
+            <div class="stepper-wrapper">
+                <div class="stepper-progress" id="stepperProgress"></div>
+                <div class="step-item active" data-step="1">
+                    <div class="step-icon">1</div>
+                    <span class="step-label">Estabelecimento</span>
+                </div>
+                <div class="step-item" data-step="2">
+                    <div class="step-icon">2</div>
+                    <span class="step-label">Sua Oferta</span>
+                </div>
+                <div class="step-item" data-step="3">
+                    <div class="step-icon">3</div>
+                    <span class="step-label">Fotos & Mídias</span>
+                </div>
+                <div class="step-item" data-step="4">
+                    <div class="step-icon">4</div>
+                    <span class="step-label">Revisão & Envio</span>
+                </div>
+            </div>
+
+            <!-- Wizard Layout Grid: Form + Live Preview Card -->
+            <div class="wizard-layout-grid">
+                
+                <!-- Left: Form Steps Container -->
+                <div class="wizard-card-form">
+                    
+                    <!-- STEP 1: Estabelecimento -->
+                    <div class="wizard-step-pane active" id="stepPane1">
+                        <div class="pane-header">
+                            <h2><i class="fa-solid fa-shop"></i> Etapa 1 de 4: Dados do Seu Negócio</h2>
+                            <p>Informe os dados básicos do seu restaurante, pizzaria ou atração.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="businessName">Nome do Estabelecimento *</label>
+                            <input type="text" id="businessName" placeholder="Ex: Pizzaria Moinhos de Vento" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="businessCity">Cidade / Região *</label>
+                                <select id="businessCity" required>
+                                    <option value="poa">Porto Alegre</option>
+                                    <option value="gramado">Gramado & Canela</option>
+                                    <option value="litoral">Litoral Gaúcho</option>
+                                    <option value="bento">Bento Gonçalves / Serra</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="businessCategory">Categoria Principal *</label>
+                                <select id="businessCategory" required>
+                                    <option value="pizzaria">Pizzaria / Rodízio</option>
+                                    <option value="fondue">Fondue & Sequências</option>
+                                    <option value="hamburguer">Hambúrguer / Gastropub</option>
+                                    <option value="parques">Parque / Atração Turística</option>
+                                    <option value="cafe">Café Colonial / Doceria</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="businessNeighborhood">Bairro / Endereço Completo *</label>
+                            <input type="text" id="businessNeighborhood" placeholder="Ex: Moinhos de Vento - Rua Fernando Gomes, 120" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="businessWhatsapp">WhatsApp Comercial do Estabelecimento *</label>
+                            <input type="tel" id="businessWhatsapp" placeholder="(51) 99999-9999" required>
+                            <small class="form-help">É neste WhatsApp que você receberá as reservas e mensagens dos clientes VIP.</small>
+                        </div>
+
+                        <div class="pane-actions">
+                            <div></div> <!-- Empty placeholder for flex alignment -->
+                            <button type="button" class="btn btn-primary btn-next" onclick="goToStep(2)">
+                                Continuar para a Oferta <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Detalhes da Oferta -->
+                    <div class="wizard-step-pane" id="stepPane2">
+                        <div class="pane-header">
+                            <h2><i class="fa-solid fa-tags"></i> Etapa 2 de 4: Criar Sua Oferta</h2>
+                            <p>Defina o prato ou serviço com o desconto exclusivo para atração de clientes.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="offerTitle">Título da Oferta *</label>
+                            <input type="text" id="offerTitle" placeholder="Ex: Rodízio de Pizzas Artesanais + Calzone & Sobremesas" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="offerDescription">Descrição dos Itens Incluídos *</label>
+                            <textarea id="offerDescription" rows="3" placeholder="Descreva o que está incluso no cupom (ex: Válido de Terça a Sexta. Inclui mais de 30 sabores de pizza e buffet completo)."></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="oldPrice">Preço Original no Cardápio (De R$) *</label>
+                                <input type="number" id="oldPrice" step="0.01" placeholder="98.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPrice">Preço Promocional VIP (Por R$) *</label>
+                                <input type="number" id="newPrice" step="0.01" placeholder="54.90" required>
+                            </div>
+                        </div>
+
+                        <div class="discount-calculator-box" id="discountCalcBox">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Economia Calculada para o Cliente: <strong id="calculatedDiscount">0% OFF (Economia de R$ 0,00)</strong></span>
+                        </div>
+
+                        <div class="pane-actions">
+                            <button type="button" class="btn btn-secondary btn-prev" onclick="goToStep(1)">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="button" class="btn btn-primary btn-next" onclick="goToStep(3)">
+                                Continuar para Fotos <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Fotos & Mídias -->
+                    <div class="wizard-step-pane" id="stepPane3">
+                        <div class="pane-header">
+                            <h2><i class="fa-solid fa-image"></i> Etapa 3 de 4: Imagem do Prato ou Local</h2>
+                            <p>Adicione uma foto apetitosa de alta qualidade para destacar seu anúncio.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imageUrl">Link da Foto Principal (URL da Imagem ou Instagram) *</label>
+                            <input type="url" id="imageUrl" placeholder="https://... ou cole o link da foto do seu Instagram" required>
+                            <small class="form-help">Você também pode enviar as fotos diretamente no nosso WhatsApp na etapa final.</small>
+                        </div>
+
+                        <div class="photo-sample-presets">
+                            <label>Ou escolha uma foto de demonstração rápida:</label>
+                            <div class="preset-images-grid">
+                                <button type="button" class="preset-img-btn" onclick="setPresetImage('https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80')">
+                                    <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=150&q=80" alt="Pizza">
+                                    <span>Pizza</span>
+                                </button>
+                                <button type="button" class="preset-img-btn" onclick="setPresetImage('https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=600&q=80')">
+                                    <img src="https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=150&q=80" alt="Fondue">
+                                    <span>Fondue</span>
+                                </button>
+                                <button type="button" class="preset-img-btn" onclick="setPresetImage('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80')">
+                                    <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=150&q=80" alt="Burger">
+                                    <span>Burger</span>
+                                </button>
+                                <button type="button" class="preset-img-btn" onclick="setPresetImage('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80')">
+                                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=150&q=80" alt="Carne">
+                                    <span>Carne</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pane-actions">
+                            <button type="button" class="btn btn-secondary btn-prev" onclick="goToStep(2)">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="button" class="btn btn-primary btn-next" onclick="goToStep(4)">
+                                Revisar Oferta <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Revisão & Finalização -->
+                    <div class="wizard-step-pane" id="stepPane4">
+                        <div class="pane-header">
+                            <h2><i class="fa-solid fa-circle-check"></i> Etapa 4 de 4: Revisão & Publicação</h2>
+                            <p>Confira como seu anúncio aparecerá para os clientes e envie para ativação.</p>
+                        </div>
+
+                        <div class="review-summary-box">
+                            <h3><i class="fa-solid fa-clipboard-list"></i> Resumo do Cadastro</h3>
+                            <ul class="review-list" id="reviewList">
+                                <!-- Dynamic review data via JS -->
+                            </ul>
+                        </div>
+
+                        <div class="pane-actions">
+                            <button type="button" class="btn btn-secondary btn-prev" onclick="goToStep(3)">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="button" class="btn btn-success-finish" onclick="submitPartnerOffer()">
+                                <i class="fa-brands fa-whatsapp"></i> Publicar Oferta no WhatsApp
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: Live Preview Component -->
+                <div class="wizard-preview-sidebar">
+                    <div class="preview-header">
+                        <span class="preview-badge"><i class="fa-solid fa-eye"></i> Pré-Visualização em Tempo Real</span>
+                        <p>É assim que o seu anúncio aparecerá no site:</p>
+                    </div>
+
+                    <!-- Live Mock Card -->
+                    <div class="offer-card preview-offer-card" id="livePreviewCard">
+                        <div class="card-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80" alt="Foto da Oferta" class="card-img" id="previewImg">
+                            <span class="card-badge" id="previewBadge">-44% OFF</span>
+                            <span class="card-badge-vip"><i class="fa-solid fa-crown"></i> Cupom VIP</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-location" id="previewLocation">
+                                <i class="fa-solid fa-location-dot"></i> Porto Alegre • Moinhos de Vento
+                            </div>
+                            <h3 class="card-title" id="previewTitle">Rodízio de Pizzas Artesanais + Calzone & Sobremesas</h3>
+                            <div class="card-desc" id="previewDesc">⭐ 5.0 (Novo Parceiro) • Resgate imediato pelo WhatsApp</div>
+                            
+                            <div class="card-price-row">
+                                <div>
+                                    <span class="price-old" id="previewOldPrice">De R$ 98,00</span> <br>
+                                    <span class="price-new" id="previewNewPrice">R$ 54,90</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-card-resgate" disabled style="opacity: 0.9;">
+                                <i class="fa-brands fa-whatsapp"></i> Resgatar no WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Tchê Urbano. Painel de Controle B2B do Parceiro Fundador. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Script -->
+    <script src="parceiro.js"></script>
+</body>
+</html>
