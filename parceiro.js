@@ -33,24 +33,21 @@ function bindInputEvents() {
         "businessWhatsapp", "offerTitle", "offerDescription", "oldPrice", "newPrice", "imageUrl"
     ];
 
+    const updateValue = (id, val) => {
+        if (id === "oldPrice" || id === "newPrice") {
+            formData[id] = parseFloat(val) || 0;
+        } else {
+            formData[id] = val;
+        }
+        saveState();
+        updateLivePreview();
+    };
+
     inputs.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
-            element.addEventListener("input", (e) => {
-                const val = e.target.value;
-                if (id === "oldPrice" || id === "newPrice") {
-                    formData[id] = parseFloat(val) || 0;
-                } else {
-                    formData[id] = val;
-                }
-                saveState();
-                updateLivePreview();
-            });
-            element.addEventListener("change", (e) => {
-                formData[id] = e.target.value;
-                saveState();
-                updateLivePreview();
-            });
+            element.addEventListener("input", (e) => updateValue(id, e.target.value));
+            element.addEventListener("change", (e) => updateValue(id, e.target.value));
         }
     });
 }
@@ -89,12 +86,21 @@ function validateStep(step) {
             return false;
         }
     } else if (step === 2) {
-        if (!formData.offerTitle || !formData.oldPrice || !formData.newPrice) {
+        // Read directly from DOM element to guarantee fresh numeric parsing
+        const oldVal = parseFloat(document.getElementById("oldPrice").value) || 0;
+        const newVal = parseFloat(document.getElementById("newPrice").value) || 0;
+        const titleVal = document.getElementById("offerTitle").value.trim();
+
+        formData.oldPrice = oldVal;
+        formData.newPrice = newVal;
+        formData.offerTitle = titleVal;
+
+        if (!titleVal || oldVal <= 0 || newVal <= 0) {
             alert("Por favor, informe o Título da Oferta, Preço Original e Preço Promocional.");
             return false;
         }
-        if (formData.newPrice >= formData.oldPrice) {
-            alert("O Preço Promocional deve ser MENOR do que o Preço Original.");
+        if (newVal >= oldVal) {
+            alert("O Preço Promocional (R$ " + newVal + ") deve ser MENOR do que o Preço Original (R$ " + oldVal + ").");
             return false;
         }
     }
@@ -102,7 +108,6 @@ function validateStep(step) {
 }
 
 function updateStepperUI() {
-    // Panes
     for (let i = 1; i <= 4; i++) {
         const pane = document.getElementById(`stepPane${i}`);
         if (pane) {
@@ -114,7 +119,6 @@ function updateStepperUI() {
         }
     }
 
-    // Step items
     const stepItems = document.querySelectorAll(".step-item");
     stepItems.forEach((item, idx) => {
         const stepNum = idx + 1;
@@ -129,7 +133,6 @@ function updateStepperUI() {
         }
     });
 
-    // Progress bar
     const progress = document.getElementById("stepperProgress");
     if (progress) {
         const percentage = ((currentStep - 1) / 3) * 100;
@@ -150,7 +153,6 @@ function updateLivePreview() {
     const previewImg = document.getElementById("previewImg");
     const calculatedDiscount = document.getElementById("calculatedDiscount");
 
-    // City Name Map
     const cityMap = {
         poa: "Porto Alegre",
         gramado: "Gramado & Canela",
@@ -237,7 +239,6 @@ function loadSavedState() {
             const parsed = JSON.parse(saved);
             Object.assign(formData, parsed);
 
-            // Set input values
             Object.keys(formData).forEach(key => {
                 const el = document.getElementById(key);
                 if (el) el.value = formData[key];
