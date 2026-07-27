@@ -27,50 +27,60 @@
 <body>
 
     <!-- Header / Navbar -->
-    <header class="navbar">
+    <header class="navbar" role="banner">
         <div class="container nav-container">
-            <a href="#" class="brand-logo">
-                <span class="logo-accent">Tchê</span>Urbano
+            <a href="#" class="brand-logo" aria-label="Tchê Urbano Página Inicial">
+                <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
                 <span class="badge-beta">CLUBE VIP</span>
             </a>
-            
-            <div class="nav-location">
-                <i class="fa-solid fa-location-dot"></i>
-                <select id="citySelect" class="city-selector">
-                    <option value="all">Todas as Cidades</option>
-                    <option value="poa" selected>Porto Alegre</option>
-                    <option value="gramado">Gramado & Canela</option>
-                    <option value="litoral">Litoral Gaúcho</option>
-                </select>
-            </div>
 
-            <div class="nav-actions">
-                <a href="https://wa.me/5551999999999?text=Quero%20entrar%20no%20Clube%20VIP%20no%20WhatsApp%20e%20economizar" target="_blank" class="btn btn-whatsapp-header">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    <span>Clube VIP no WhatsApp</span>
-                </a>
+            <!-- Mobile Hamburger Toggle -->
+            <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Alternar menu de navegação" aria-expanded="false">
+                <i class="fa-solid fa-bars" id="menuIcon"></i>
+            </button>
+            
+            <div class="nav-menu" id="navMenu" role="navigation">
+                <div class="nav-location">
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                    <label for="citySelect" class="sr-only">Selecione a Cidade</label>
+                    <select id="citySelect" class="city-selector" aria-label="Cidade selecionada">
+                        <option value="all">Todas as Cidades</option>
+                        <option value="poa" selected>Porto Alegre</option>
+                        <option value="gramado">Gramado & Canela</option>
+                        <option value="litoral">Litoral Gaúcho</option>
+                    </select>
+                </div>
+
+                <div class="nav-actions">
+                    <a href="https://wa.me/5551999999999?text=Quero%20entrar%20no%20Clube%20VIP%20no%20WhatsApp%20e%20economizar" target="_blank" rel="noopener" class="btn btn-whatsapp-header">
+                        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                        <span>Clube VIP no WhatsApp</span>
+                    </a>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero-section" role="region" aria-label="Apresentação Principal">
         <div class="container hero-container">
             <div class="hero-badge">
-                <i class="fa-solid fa-sack-dollar"></i> Economia Real de R$ 50 a R$ 200 por Visita • Resgate em 30s no WhatsApp
+                <i class="fa-solid fa-sack-dollar" aria-hidden="true"></i> 
+                <span>Economia Real de R$ 50 a R$ 200 por Visita • Resgate em 30s no WhatsApp</span>
             </div>
             <h1 class="hero-title">
-                Economize dinheiro de verdade no RS <br>
+                Economize dinheiro de verdade no RS <br class="desktop-only">
                 <span class="text-gradient">direto pelo Clube VIP no WhatsApp.</span>
             </h1>
             <p class="hero-subtitle">
                 Restaurantes renomados, pizzarias temáticas, fondues e passeios com <strong>descontos reais de até 50% OFF</strong>. Você garante a sua economia na hora e recebe o voucher no chat sem cadastros demorados.
             </p>
 
-            <!-- Search Bar -->
+            <!-- Search Box -->
             <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="searchInput" placeholder="Busque por restaurante, prato ou cidade (ex: Fondue, Pizza, Gramado)...">
+                <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+                <label for="searchInput" class="sr-only">Buscar restaurante ou cidade</label>
+                <input type="text" id="searchInput" placeholder="Busque por restaurante, prato ou cidade (ex: Fondue, Pizza, Gramado)..." aria-label="Busque por restaurante, prato ou cidade">
                 <button class="btn btn-primary btn-search" onclick="filterOffers()">Buscar Economia</button>
             </div>
 
@@ -80,12 +90,12 @@
                     <span class="stat-num">R$ 120+</span>
                     <span class="stat-label">Economia Média por Membro</span>
                 </div>
-                <div class="stat-divider"></div>
+                <div class="stat-divider" aria-hidden="true"></div>
                 <div class="stat-item">
                     <span class="stat-num">100%</span>
                     <span class="stat-label">Garantia de Desconto em R$</span>
                 </div>
-                <div class="stat-divider"></div>
+                <div class="stat-divider" aria-hidden="true"></div>
                 <div class="stat-item">
                     <span class="stat-num">⭐ 4.9</span>
                     <span class="stat-label">Avaliação dos Membros VIP</span>
@@ -95,33 +105,33 @@
     </section>
 
     <!-- Category Filter Bar -->
-    <section class="categories-section">
+    <section class="categories-section" role="region" aria-label="Categorias de Economia">
         <div class="container">
-            <div class="categories-scroll" id="categoryBar">
-                <button class="cat-pill active" data-cat="all">
-                    <i class="fa-solid fa-border-all"></i> Todas as Economias
+            <div class="categories-scroll" id="categoryBar" role="tablist" aria-label="Filtro de Categorias">
+                <button class="cat-pill active" data-cat="all" role="tab" aria-selected="true">
+                    <i class="fa-solid fa-border-all" aria-hidden="true"></i> Todas as Economias
                 </button>
-                <button class="cat-pill" data-cat="pizzaria">
-                    <i class="fa-solid fa-pizza-slice"></i> Pizzarias
+                <button class="cat-pill" data-cat="pizzaria" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-pizza-slice" aria-hidden="true"></i> Pizzarias
                 </button>
-                <button class="cat-pill" data-cat="fondue">
-                    <i class="fa-solid fa-cheese"></i> Fondues & Sequências
+                <button class="cat-pill" data-cat="fondue" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-cheese" aria-hidden="true"></i> Fondues & Sequências
                 </button>
-                <button class="cat-pill" data-cat="hamburguer">
-                    <i class="fa-solid fa-burger"></i> Hambúrgueres
+                <button class="cat-pill" data-cat="hamburguer" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-burger" aria-hidden="true"></i> Hambúrgueres
                 </button>
-                <button class="cat-pill" data-cat="parques">
-                    <i class="fa-solid fa-ticket"></i> Parques & Atrações
+                <button class="cat-pill" data-cat="parques" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-ticket" aria-hidden="true"></i> Parques & Atrações
                 </button>
-                <button class="cat-pill" data-cat="cafe">
-                    <i class="fa-solid fa-mug-hot"></i> Cafés & Docerias
+                <button class="cat-pill" data-cat="cafe" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-mug-hot" aria-hidden="true"></i> Cafés & Docerias
                 </button>
             </div>
         </div>
     </section>
 
     <!-- Offers Grid Section -->
-    <section class="offers-section">
+    <section class="offers-section" role="region" aria-label="Lista de Ofertas">
         <div class="container">
             <div class="section-header">
                 <div>
@@ -130,7 +140,7 @@
                 </div>
                 <div class="sort-wrapper">
                     <label for="sortSelect">Ordenar por:</label>
-                    <select id="sortSelect" onchange="sortOffers()">
+                    <select id="sortSelect" onchange="sortOffers()" aria-label="Ordenar ofertas por">
                         <option value="popular">Mais Desejados</option>
                         <option value="discount">Maior Economia (R$)</option>
                         <option value="price-low">Menor Preço</option>
@@ -139,31 +149,31 @@
             </div>
 
             <!-- Offers Container (Dynamic Render via JS) -->
-            <div class="offers-grid" id="offersGrid">
+            <div class="offers-grid" id="offersGrid" role="feed" aria-busy="false">
                 <!-- Javascript will render offer cards here -->
             </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works">
+    <section class="how-it-works" role="region" aria-label="Como Funciona">
         <div class="container">
             <h2 class="section-title text-center">Como Garantir Sua Economia no Clube VIP</h2>
             <p class="section-desc text-center">Simplicidade extrema para você guardar dinheiro na próxima refeição ou viagem</p>
 
             <div class="steps-grid">
                 <div class="step-card">
-                    <div class="step-icon"><i class="fa-solid fa-tags"></i></div>
+                    <div class="step-icon"><i class="fa-solid fa-tags" aria-hidden="true"></i></div>
                     <h3>1. Escolha Quanto Quer Economizar</h3>
                     <p>Encontre ofertas exclusivas com descontos de R$ 40,00 a R$ 150,00 em lugares selecionados do RS.</p>
                 </div>
                 <div class="step-card">
-                    <div class="step-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="step-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></div>
                     <h3>2. Entre no Clube VIP no WhatsApp</h3>
                     <p>Resgate o voucher em 30 segundos no WhatsApp sem cadastros burocráticos ou taxas escondidas.</p>
                 </div>
                 <div class="step-card">
-                    <div class="step-icon"><i class="fa-solid fa-receipt"></i></div>
+                    <div class="step-icon"><i class="fa-solid fa-receipt" aria-hidden="true"></i></div>
                     <h3>3. Apresente e Economize no Salão</h3>
                     <p>Apresente o QR Code no seu celular ao garçom e pague menos na conta final do estabelecimento.</p>
                 </div>
@@ -172,25 +182,25 @@
     </section>
 
     <!-- B2B Merchant Banner Section -->
-    <section class="b2b-banner">
+    <section class="b2b-banner" role="region" aria-label="Parceria B2B">
         <div class="container b2b-container">
             <div class="b2b-content">
                 <span class="b2b-tag">Para Donos de Negócios Locais</span>
                 <h2>Preencha suas mesas ociosas atraindo membros do nosso Clube VIP no WhatsApp.</h2>
                 <p>Anuncie seu estabelecimento no Tchê Urbano. Trabalhamos com o modelo Parceiro Fundador de risco zero para entregar clientes pagantes no seu salão.</p>
-                <a href="https://wa.me/5551999999999?text=Tenho%20um%20neg%C3%B3cio%20e%20quero%20anunciar%20para%20o%20Clube%20VIP" target="_blank" class="btn btn-b2b">
-                    <i class="fa-solid fa-handshake"></i> Quero Ser Parceiro Fundador
+                <a href="https://wa.me/5551999999999?text=Tenho%20um%20neg%C3%B3cio%20e%20quero%20anunciar%20para%20o%20Clube%20VIP" target="_blank" rel="noopener" class="btn btn-b2b">
+                    <i class="fa-solid fa-handshake" aria-hidden="true"></i> Quero Ser Parceiro Fundador
                 </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="container footer-container">
             <div class="footer-col">
-                <a href="#" class="brand-logo footer-logo">
-                    <span class="logo-accent">Tchê</span>Urbano
+                <a href="#" class="brand-logo footer-logo" aria-label="Tchê Urbano">
+                    <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
                 </a>
                 <p class="footer-text">O seu Clube VIP no WhatsApp para economizar dinheiro de verdade no Rio Grande do Sul.</p>
             </div>
@@ -217,9 +227,9 @@
 
             <div class="footer-col">
                 <h4>Atendimento VIP</h4>
-                <p><i class="fa-brands fa-whatsapp"></i> WhatsApp: (51) 99999-9999</p>
-                <p><i class="fa-solid fa-envelope"></i> contato@tcheurbano.com.br</p>
-                <p><i class="fa-solid fa-clock"></i> Atendimento VIP no WhatsApp</p>
+                <p><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp: (51) 99999-9999</p>
+                <p><i class="fa-solid fa-envelope" aria-hidden="true"></i> contato@tcheurbano.com.br</p>
+                <p><i class="fa-solid fa-clock" aria-hidden="true"></i> Atendimento VIP no WhatsApp</p>
             </div>
         </div>
         <div class="footer-bottom text-center">

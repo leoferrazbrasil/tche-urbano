@@ -105,6 +105,7 @@ let currentSort = "popular";
 // DOM Loaded Initialization
 document.addEventListener("DOMContentLoaded", () => {
     initEvents();
+    initMobileMenu();
     renderOffers();
 });
 
@@ -112,9 +113,13 @@ function initEvents() {
     // Category pill click handler
     const pills = document.querySelectorAll(".cat-pill");
     pills.forEach(pill => {
-        pill.addEventListener("click", (e) => {
-            pills.forEach(p => p.classList.remove("active"));
+        pill.addEventListener("click", () => {
+            pills.forEach(p => {
+                p.classList.remove("active");
+                p.setAttribute("aria-selected", "false");
+            });
             pill.classList.add("active");
+            pill.setAttribute("aria-selected", "true");
             currentCategory = pill.getAttribute("data-cat");
             renderOffers();
         });
@@ -122,17 +127,48 @@ function initEvents() {
 
     // City selector change
     const citySelect = document.getElementById("citySelect");
-    citySelect.addEventListener("change", (e) => {
-        currentCity = e.target.value;
-        renderOffers();
-    });
+    if (citySelect) {
+        citySelect.addEventListener("change", (e) => {
+            currentCity = e.target.value;
+            renderOffers();
+        });
+    }
 
     // Search input typing
     const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("input", (e) => {
-        searchQuery = e.target.value.toLowerCase().trim();
-        renderOffers();
-    });
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            searchQuery = e.target.value.toLowerCase().trim();
+            renderOffers();
+        });
+    }
+}
+
+function initMobileMenu() {
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const navMenu = document.getElementById("navMenu");
+    const menuIcon = document.getElementById("menuIcon");
+
+    if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener("click", () => {
+            const isOpen = navMenu.classList.toggle("active");
+            mobileMenuBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (menuIcon) {
+                menuIcon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+            }
+        });
+
+        // Close menu on click outside
+        document.addEventListener("click", (e) => {
+            if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target) && navMenu.classList.contains("active")) {
+                navMenu.classList.remove("active");
+                mobileMenuBtn.setAttribute("aria-expanded", "false");
+                if (menuIcon) {
+                    menuIcon.className = "fa-solid fa-bars";
+                }
+            }
+        });
+    }
 }
 
 function filterOffers() {
@@ -140,12 +176,16 @@ function filterOffers() {
 }
 
 function sortOffers() {
-    currentSort = document.getElementById("sortSelect").value;
-    renderOffers();
+    const sortSelect = document.getElementById("sortSelect");
+    if (sortSelect) {
+        currentSort = sortSelect.value;
+        renderOffers();
+    }
 }
 
 function renderOffers() {
     const grid = document.getElementById("offersGrid");
+    if (!grid) return;
     
     // Filter
     let filtered = OFFERS_DATA.filter(item => {
@@ -180,15 +220,15 @@ function renderOffers() {
     }
 
     grid.innerHTML = filtered.map(item => `
-        <div class="offer-card">
+        <article class="offer-card" aria-label="${item.title}">
             <div class="card-img-wrapper">
-                <img src="${item.image}" alt="${item.title}" class="card-img" loading="lazy">
+                <img src="${item.image}" alt="${item.title}" class="card-img" loading="lazy" width="600" height="400">
                 <span class="card-badge">-${item.discountPercent}% OFF</span>
-                <span class="card-badge-vip"><i class="fa-solid fa-crown"></i> Cupom VIP</span>
+                <span class="card-badge-vip"><i class="fa-solid fa-crown" aria-hidden="true"></i> Cupom VIP</span>
             </div>
             <div class="card-body">
                 <div class="card-location">
-                    <i class="fa-solid fa-location-dot"></i> ${item.location}
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${item.location}
                 </div>
                 <h3 class="card-title">${item.title}</h3>
                 <div class="card-desc">⭐ ${item.rating} (${item.reviewsCount} avaliações) • Resgate imediato</div>
@@ -202,10 +242,12 @@ function renderOffers() {
 
                 <a href="https://wa.me/5551992568861?text=${encodeURIComponent(item.whatsappText)}"
                    target="_blank"
-                   class="btn btn-card-resgate">
-                    <i class="fa-brands fa-whatsapp"></i> Resgatar no WhatsApp
+                   rel="noopener"
+                   class="btn btn-card-resgate"
+                   aria-label="Resgatar cupom para ${item.title} no WhatsApp">
+                    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Resgatar no WhatsApp
                 </a>
             </div>
-        </div>
+        </article>
     `).join("");
 }
