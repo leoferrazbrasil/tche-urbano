@@ -9,7 +9,16 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentVideoData = null;
 let ffmpegInstance = null;
-const { createFFmpeg, fetchFile } = FFmpeg;
+let createFFmpeg, fetchFile;
+
+try {
+    if (typeof FFmpeg !== 'undefined') {
+        createFFmpeg = FFmpeg.createFFmpeg;
+        fetchFile = FFmpeg.fetchFile;
+    }
+} catch(e) {
+    console.warn("FFmpeg WASM não carregado:", e);
+}
 
 // ==========================================
 // 1. SUPABASE PIPELINE (Kanban)
@@ -54,11 +63,16 @@ async function addVideo() {
     
     document.getElementById('addBtn').innerText = 'Salvando...';
     try {
-        await supabase.from('viral_videos').insert([{ original_url: url, status: 'fila' }]);
+        const { error } = await supabase.from('viral_videos').insert([{ original_url: url, status: 'fila' }]);
+        if (error) {
+            console.error("Insert error:", error);
+            alert("Erro Supabase: " + error.message);
+            throw error;
+        }
         input.value = '';
         await loadQueue();
     } catch (e) {
-        alert('Erro ao salvar no Supabase');
+        alert('Erro ao salvar no Supabase. Veja o console.');
     }
     document.getElementById('addBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Salvar na Fila';
 }
@@ -196,5 +210,5 @@ async function exportVideo() {
     }
 }
 
-// Bootstrap
-window.onload = loadQueue;
+// Bootstrap (Call immediately since script is at the end of body)
+loadQueue();
