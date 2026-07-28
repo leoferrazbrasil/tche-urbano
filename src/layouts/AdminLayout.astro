@@ -1,0 +1,80 @@
+---
+// src/layouts/AdminLayout.astro
+export interface Props {
+  title?: string;
+}
+
+const { title = "Admin - Tchê Urbano" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <slot name="head" />
+</head>
+<body class="bg-gray-100 font-['Aleo'] text-gray-800 flex h-screen overflow-hidden">
+    
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#222] text-white flex flex-col shadow-2xl h-full flex-shrink-0">
+        <div class="p-6 flex items-center justify-center border-b border-gray-800">
+            <!-- Pode substituir por um logo depois -->
+            <h1 class="text-2xl font-bold tracking-tighter text-[#FAF6F1]">
+                Tchê<span class="text-[#821512]">Urbano</span>
+                <span class="block text-xs font-normal text-gray-400 mt-1 uppercase tracking-widest">Admin Hub</span>
+            </h1>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#821512] hover:text-white transition-colors">
+                <i class="fa-solid fa-gauge w-5 text-center"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <div class="pt-4 pb-2">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4">Marketing</p>
+            </div>
+            <a href="/admin/studio" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#821512] hover:text-white transition-colors">
+                <i class="fa-solid fa-video w-5 text-center"></i>
+                <span class="font-medium">Fábrica de Vídeos</span>
+            </a>
+            <a href="/admin/collab" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#821512] hover:text-white transition-colors">
+                <i class="fa-solid fa-images w-5 text-center"></i>
+                <span class="font-medium">Gerador Collab</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-800">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors text-sm">
+                <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                <span>Sair / Voltar ao Site</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-[#FAF6F1]">
+        <!-- Topbar -->
+        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-8 flex-shrink-0 z-10 relative">
+            <h2 class="text-xl font-bold text-gray-800">Painel de Controle</h2>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-gray-500">Modo Administrador</span>
+                <div class="w-8 h-8 rounded-full bg-[#821512] flex items-center justify-center text-white font-bold shadow-md">
+                    <i class="fa-solid fa-user-shield text-xs"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto overflow-x-hidden relative h-full w-full">
+            <slot />
+        </main>
+    </div>
+
+</body>
+</html>
