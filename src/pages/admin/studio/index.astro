@@ -1,0 +1,233 @@
+---
+// src/pages/admin/studio/index.astro
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio | Tchê Urbano</title>
+    <!-- Google Fonts: Aleo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Supabase JS -->
+    <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- FFmpeg WASM -->
+    <script is:inline src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.min.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js"></script>
+    
+    <!-- html2canvas -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #FAF6F1;
+            --color-primary: #821512;
+            --color-gold: #B8860B;
+            --color-text: #221512;
+            --shadow: 0 10px 30px -10px rgba(34,21,18,0.18);
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Aleo', serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Kanban */
+        .sidebar {
+            width: 350px;
+            background-color: #222;
+            border-right: 1px solid #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #333;
+            color: #fff;
+            font-family: 'Aleo', serif;
+        }
+
+        button {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover { background-color: #6a100d; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+
+        .video-card {
+            background: #333;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #444;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .video-card:hover { border-color: var(--color-primary); }
+
+        /* Main Workspace */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Phone Simulator */
+        .phone-frame {
+            width: 360px; /* Scaled down 9:16 ratio from 1080x1920 */
+            height: 640px;
+            background: #000;
+            border-radius: 30px;
+            border: 10px solid #333;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Overlay that will be captured */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1080px;
+            height: 1920px;
+            transform: scale(0.3333); /* 360/1080 */
+            transform-origin: top left;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .headline {
+            background: rgba(250, 246, 241, 0.95);
+            padding: 40px 60px;
+            border-radius: 20px;
+            color: #821512;
+            font-size: 70px;
+            font-weight: 800;
+            text-align: center;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: -600px; /* Position it high */
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            max-width: 600px;
+            flex-direction: column;
+        }
+
+        .status-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        /* Render Target for html2canvas (Hidden) */
+        #renderTarget {
+            position: absolute;
+            top: -10000px;
+            left: -10000px;
+            width: 1080px;
+            height: 1920px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Curadoria</h2>
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="Cole o link do Reels ou TikTok">
+            <button id="addBtn" onclick="addVideo()"><i class="fa-solid fa-plus"></i> Salvar na Fila</button>
+        </div>
+        
+        <h3>Fila de Edição</h3>
+        <div id="queueList">
+            <!-- Videos will load here via Supabase -->
+            <p style="color:#777; font-size:14px;">Carregando vídeos...</p>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <h2 style="margin-bottom: 20px;">Estúdio (Tchê Urbano Engine)</h2>
+        
+        <div class="phone-frame">
+            <video id="previewVideo" autoplay loop muted playsinline></video>
+            
+            <div class="overlay">
+                <div class="headline" id="overlayTextDisplay">Digite seu texto aqui</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="headlineInput" placeholder="Manchete do Vídeo..." oninput="updateText()" value="Digite seu texto aqui">
+            <button id="exportBtn" onclick="exportVideo()" disabled><i class="fa-solid fa-magic"></i> Renderizar & Baixar (FFmpeg)</button>
+        </div>
+
+        <div class="status-bar" id="statusBar">Processando...</div>
+    </div>
+
+    <!-- Hidden Render Target for FFmpeg Image Overlay -->
+    <div id="renderTarget">
+        <div class="headline" id="renderTextDisplay">Digite seu texto aqui</div>
+    </div>
+
+    <script is:inline src="/studio.js"></script>
+</body>
+</html>
