@@ -2,14 +2,8 @@
    Tchê Urbano & Santa Temporada - B2B Dashboard Analytics & Supabase Sync
    ========================================================================== */
 
-// Initial Mock Metrics (SaaS Dashboard Analytics)
-const MOCK_REDEMPTIONS = [
-    { code: "TCHE-BRUXA-94", offer: "Rodízio de Pizzas Temático (+50 Sabores)", price: 94.00, status: "validado", created_at: "27/07/2026 20:45", validated_at: "27/07/2026 20:56" },
-    { code: "TCHE-BRUXA-95", offer: "Rodízio de Pizzas Temático (+50 Sabores)", price: 94.00, status: "validado", created_at: "27/07/2026 19:30", validated_at: "27/07/2026 20:12" },
-    { code: "TCHE-BRUXA-96", offer: "Rodízio de Pizzas Temático (+50 Sabores)", price: 94.00, status: "gerado", created_at: "27/07/2026 19:10", validated_at: "-" },
-    { code: "TCHE-BRUXA-97", offer: "Rodízio de Pizzas Temático (+50 Sabores)", price: 94.00, status: "validado", created_at: "27/07/2026 18:22", validated_at: "27/07/2026 19:05" },
-    { code: "TCHE-BRUXA-98", offer: "Rodízio de Pizzas Temático (+50 Sabores)", price: 94.00, status: "gerado", created_at: "27/07/2026 17:40", validated_at: "-" }
-];
+// Inicializa sem mock.
+const MOCK_REDEMPTIONS = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchRealtimeMetrics();
@@ -27,19 +21,25 @@ async function fetchRealtimeMetrics() {
                 .select("*")
                 .order("created_at", { ascending: false });
 
-            if (!error && data && data.length > 0) {
+            if (error) throw error;
+            
+            if (data && data.length > 0) {
                 renderTableData(data);
                 calculateKPIs(data);
                 return;
+            } else {
+                renderTableData([]);
+                calculateKPIs([]);
+                return;
             }
         } catch (e) {
-            console.warn("Supabase query fallback to local analytics", e);
+            console.warn("Erro ao buscar métricas reais:", e);
         }
     }
 
     // Default Fallback
-    renderTableData(MOCK_REDEMPTIONS);
-    calculateKPIs(MOCK_REDEMPTIONS);
+    renderTableData([]);
+    calculateKPIs([]);
 }
 
 function calculateKPIs(items) {

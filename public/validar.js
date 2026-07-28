@@ -5,36 +5,7 @@
 let html5QrcodeScanner = null;
 let isCameraActive = false;
 
-// Mock Database of Valid Vouchers & Hash Tokens
-const VOUCHERS_DB = {
-    "TCHE-BRUXA-94": {
-        merchant: "Toca da Bruxa Canela",
-        offer: "Rodízio de Pizzas Temático (+50 Sabores)",
-        originalPrice: 149.00,
-        promoPrice: 94.00,
-        savings: 55.00,
-        validUntil: "30/08/2026",
-        used: false
-    },
-    "TCHE-FONDUE-89": {
-        merchant: "Sequência de Fondue Gramado",
-        offer: "Sequência Tradicional de Queijo, Carnes & Chocolate",
-        originalPrice: 169.90,
-        promoPrice: 89.90,
-        savings: 80.00,
-        validUntil: "30/08/2026",
-        used: false
-    },
-    "TCHE-PIZZA-54": {
-        merchant: "Rodízio de Pizzas Moinhos de Vento",
-        offer: "Rodízio de Pizzas Artesanais + Calzone",
-        originalPrice: 98.00,
-        promoPrice: 54.90,
-        savings: 43.10,
-        validUntil: "30/08/2026",
-        used: false
-    }
-};
+// VOUCHERS_DB mock removido. A validação agora ocorre diretamente no Supabase.
 
 document.addEventListener("DOMContentLoaded", () => {
     initURLParamValidation();
@@ -70,50 +41,70 @@ function validateManualCode() {
 }
 
 function processVoucherValidation(code) {
-    const resultBox = document.getElementById("resultBox");
-    const resultHeader = document.getElementById("resultHeader");
-    const resultDetails = document.getElementById("resultDetails");
-
-    if (!resultBox || !resultHeader || !resultDetails) return;
-
-    // Check DB or generated pattern
-    const voucher = VOUCHERS_DB[code] || generateDynamicVoucher(code);
-
-    if (voucher) {
-        resultBox.className = "validation-result valid";
-        resultHeader.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>VOUCHER VÁLIDO!</span>`;
-        resultDetails.innerHTML = `
-            <li><strong>Estabelecimento:</strong> ${voucher.merchant}</li>
-            <li><strong>Oferta:</strong> ${voucher.offer}</li>
-            <li><strong>Preço a Cobrar no Caixa:</strong> <span style="font-size: 1.2rem; color: #10B981; font-weight: 800;">R$ ${voucher.promoPrice.toFixed(2).replace('.', ',')}</span></li>
-            <li><strong>Desconto Aplicado ao Cliente:</strong> R$ ${voucher.savings.toFixed(2).replace('.', ',')} OFF</li>
-            <li><strong>Código do Voucher:</strong> <code>${code}</code></li>
-            <li><strong>Data da Validação:</strong> ${new Date().toLocaleString('pt-BR')}</li>
-        `;
-    } else {
-        resultBox.className = "validation-result invalid";
-        resultHeader.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <span>VOUCHER INVÁLIDO OU EXPIRADO</span>`;
-        resultDetails.innerHTML = `
-            <li>O código <code>${code}</code> não foi encontrado ou já foi utilizado.</li>
-            <li>Verifique se o código foi digitado corretamente.</li>
-        `;
-    }
+    validateVoucherCode(code);
 }
 
-// Fallback for dynamic vouchers
-function generateDynamicVoucher(code) {
-    if (code.startsWith("TCHE-")) {
-        return {
-            merchant: "Estabelecimento Parceiro Tchê Urbano",
-            offer: "Oferta Exclusiva do Clube VIP",
-            originalPrice: 120.00,
-            promoPrice: 69.90,
-            savings: 50.10,
-            validUntil: "30/08/2026",
-            used: false
-        };
+async function validateVoucherCode(codeStr) {
+    const code = codeStr.toUpperCase().trim();
+    showLoadingState();
+
+    const client = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
+    if (!client) {
+        showErrorState("Erro interno: Falha ao conectar ao banco de dados.");
+        return;
     }
-    return null;
+
+    try {
+        const { data, error } = await client
+            .from('cupons_resgatados')
+            .select(`
+                *,
+                ofertas (
+                    titulo,
+                    preco_original,
+                    preco_promocional,
+                    parceiros (
+                        nome_estabelecimento
+                    )
+                )
+            `)
+            .eq('codigo_voucher', code)
+            .single();
+
+        if (error || !data) {
+            showErrorState("Cupom inválido ou não encontrado no sistema.");
+            return;
+        }
+
+        if (data.status === "validado") {
+            showErrorState(`Cupom já utilizado em ${new Date(data.data_validacao).toLocaleString("pt-BR")}.`);
+            return;
+        }
+
+        // Simula verificação no banco... e atualiza para validado
+        const { error: updateError } = await client
+            .from('cupons_resgatados')
+            .update({ 
+                status: 'validado',
+                data_validacao: new Date().toISOString()
+            })
+            .eq('id', data.id);
+
+        if (updateError) throw updateError;
+
+        // Sucesso
+        const savings = (parseFloat(data.ofertas.preco_original) - parseFloat(data.ofertas.preco_promocional)).toFixed(2);
+        showSuccessState({
+            merchant: data.ofertas.parceiros.nome_estabelecimento,
+            offer: data.ofertas.titulo,
+            promoPrice: parseFloat(data.ofertas.preco_promocional),
+            savings: savings
+        });
+        
+    } catch (e) {
+        console.error("Erro na validação:", e);
+        showErrorState("Erro ao validar cupom. Verifique a conexão.");
+    }
 }
 
 // Camera QR Scanner Toggle

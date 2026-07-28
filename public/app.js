@@ -3,113 +3,51 @@
    ========================================================================== */
 
 // Mock Database of Initial Partner Offers
-const OFFERS_DATA = [
-    {
-        id: "of-01",
-        title: "Sequência de Fondue Tradicional (Queijo, Carnes & Chocolate)",
-        city: "gramado",
-        location: "Gramado • Centro",
-        category: "fondue",
-        image: "https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 169.90,
-        newPrice: 89.90,
-        discountPercent: 47,
-        rating: 4.9,
-        reviewsCount: 142,
-        popular: true,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o cupom da Sequência de Fondue Tradicional em Gramado (R$ 89,90)."
-    },
-    {
-        id: "of-02",
-        title: "Rodízio de Pizzas Artesanais + Calzone & Sobremesas",
-        city: "poa",
-        location: "Porto Alegre • Moinhos de Vento",
-        category: "pizzaria",
-        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 98.00,
-        newPrice: 54.90,
-        discountPercent: 44,
-        rating: 4.8,
-        reviewsCount: 98,
-        popular: true,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o cupom do Rodízio de Pizzas em Moinhos de Vento (R$ 54,90)."
-    },
-    {
-        id: "of-03",
-        title: "Combo Smash Burger Duplo + Batata Rústica + Refri",
-        city: "poa",
-        location: "Porto Alegre • Cidade Baixa",
-        category: "hamburguer",
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 48.00,
-        newPrice: 27.90,
-        discountPercent: 42,
-        rating: 4.9,
-        reviewsCount: 86,
-        popular: false,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o Combo Smash Burger Duplo na Cidade Baixa (R$ 27,90)."
-    },
-    {
-        id: "of-04",
-        title: "Passaporte Completo Atrações e Museu de Cera",
-        city: "gramado",
-        location: "Canela / Gramado • Av. das Hortênsias",
-        category: "parques",
-        image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 220.00,
-        newPrice: 129.90,
-        discountPercent: 41,
-        rating: 5.0,
-        reviewsCount: 215,
-        popular: true,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o Passaporte de Atrações em Gramado/Canela (R$ 129,90)."
-    },
-    {
-        id: "of-05",
-        title: "Café Colonial Completo (Mais de 80 Itens Típicos)",
-        city: "gramado",
-        location: "Gramado • Estrada do Caracol",
-        category: "cafe",
-        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 140.00,
-        newPrice: 79.90,
-        discountPercent: 43,
-        rating: 4.9,
-        reviewsCount: 167,
-        popular: true,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o cupom do Café Colonial Completo em Gramado (R$ 79,90)."
-    },
-    {
-        id: "of-06",
-        title: "Rodízio Completo de Carnes Nobres & Buffet de Saladas",
-        city: "poa",
-        location: "Porto Alegre • Passo d'Areia",
-        category: "fondue",
-        image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 130.00,
-        newPrice: 74.90,
-        discountPercent: 42,
-        rating: 4.8,
-        reviewsCount: 110,
-        popular: false,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o Rodízio de Carnes Nobres em POA (R$ 74,90)."
-    },
-    {
-        id: "of-07",
-        title: "Toca da Bruxa Canela | Rodízio de Pizzas Temático (+50 Sabores)",
-        city: "gramado",
-        location: "Gramado & Canela • Centro",
-        category: "pizzaria",
-        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-        oldPrice: 149.00,
-        newPrice: 94.00,
-        discountPercent: 37,
-        rating: 5.0,
-        reviewsCount: 1,
-        popular: true,
-        whatsappText: "Vim pelo site Tchê Urbano! Quero resgatar o cupom da Toca da Bruxa Canela (R$ 94,00)."
+let OFFERS_DATA = [];
+
+async function loadOffersFromSupabase() {
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    try {
+        const { data, error } = await client
+            .from('ofertas')
+            .select(`
+                *,
+                parceiros (
+                    nome_estabelecimento,
+                    cidade,
+                    bairro_endereco,
+                    whatsapp,
+                    categoria
+                )
+            `)
+            .eq('status', 'ativa');
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            // Mapeia para o formato que a interface espera
+            OFFERS_DATA = data.map(oferta => ({
+                id: oferta.id,
+                title: oferta.titulo,
+                city: oferta.parceiros.cidade.toLowerCase(),
+                location: `${oferta.parceiros.cidade} • ${oferta.parceiros.bairro_endereco}`,
+                category: oferta.parceiros.categoria,
+                image: oferta.imagem_url,
+                oldPrice: parseFloat(oferta.preco_original),
+                newPrice: parseFloat(oferta.preco_promocional),
+                discountPercent: oferta.desconto_percent,
+                rating: 5.0, // mock temporário para rating
+                reviewsCount: Math.floor(Math.random() * 200) + 50,
+                popular: oferta.destaque_vip,
+                whatsappText: `Vim pelo site Tchê Urbano! Quero resgatar o cupom da ${oferta.titulo}.`
+            }));
+        }
+    } catch (error) {
+        console.error("Erro ao carregar ofertas:", error);
     }
-];
+}
 
 // App State
 let currentCategory = "all";
@@ -118,9 +56,10 @@ let searchQuery = "";
 let currentSort = "popular";
 
 // DOM Loaded Initialization
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     initEvents();
     initMobileMenu();
+    await loadOffersFromSupabase();
     renderOffers();
 });
 
@@ -255,14 +194,54 @@ function renderOffers() {
                     </div>
                 </div>
 
-                <a href="/voucher?code=${item.id.toUpperCase()}&m=${encodeURIComponent(item.location)}&t=${encodeURIComponent(item.title)}&old=${item.oldPrice}&new=${item.newPrice}"
-                   target="_blank"
-                   rel="noopener"
+                <button onclick="gerarVoucher(this, '${item.id}', '${item.newPrice}', '${encodeURIComponent(item.location)}', '${encodeURIComponent(item.title)}', '${item.oldPrice}')"
                    class="btn btn-card-resgate"
                    aria-label="Resgatar cupom para ${item.title}">
                     <i class="fa-solid fa-ticket" aria-hidden="true"></i> Resgatar Voucher VIP (QR Code)
-                </a>
+                </button>
             </div>
         </article>
     `).join("");
+}
+
+
+// L�gica para gerar o voucher no Supabase e redirecionar
+async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPrice) {
+    const originalText = btn.innerHTML;
+    btn.innerHTML = <i class=fa-solid fa-circle-notch fa-spin></i> Gerando...;
+    btn.disabled = true;
+
+    const client = getSupabaseClient();
+    if (!client) {
+        alert(Erro de conex�o com o servidor. Tente novamente.);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        return;
+    }
+
+    const randomCode = TCHE- + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    try {
+        const { data, error } = await client
+            .from(cupons_resgatados)
+            .insert([
+                {
+                    oferta_id: ofertaId,
+                    codigo_voucher: randomCode,
+                    price: parseFloat(preco),
+                    status: gerado
+                }
+            ])
+            .select();
+
+        if (error) throw error;
+
+        window.location.href = /voucher?code=&m=&t=&old=&new=;
+        
+    } catch (error) {
+        console.error(Erro ao gerar cupom:, error);
+        alert(N�o foi poss�vel gerar seu voucher agora. Tente novamente.);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 }
