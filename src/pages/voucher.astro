@@ -201,15 +201,14 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = (urlParams.get("code") || urlParams.get("v") || "TCHE-BRUXA-94").toUpperCase();
+    <script is:inline>
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = (urlParams.get("code") || urlParams.get("v") || "TCHE-BRUXA-94").toUpperCase();
 
-            const merchantName = urlParams.get("m") || "Toca da Bruxa Canela";
-            const title = urlParams.get("t") || "Rodízio de Pizzas Temático (+50 Sabores)";
-            const oldP = urlParams.get("old") || "149.00";
-            const newP = urlParams.get("new") || "94.00";
+        const merchantName = urlParams.get("m") || "Toca da Bruxa Canela";
+        const title = urlParams.get("t") || "Rodízio de Pizzas Temático (+50 Sabores)";
+        const oldP = urlParams.get("old") || "149.00";
+        const newP = urlParams.get("new") || "94.00";
 
             document.getElementById("voucherCode").textContent = code;
             document.getElementById("merchantName").textContent = merchantName;
@@ -246,7 +245,6 @@
                 `► *Link de Validação:* ${validationUrl}`;
 
             document.getElementById("btnWhatsappConfirm").href = `https://api.whatsapp.com/send?phone=5551996737359&text=${encodeURIComponent(waMsg)}`;
-        });
     </script>
 </body>
 </html>
