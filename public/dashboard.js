@@ -5,10 +5,8 @@
 // Inicializa sem mock.
 const MOCK_REDEMPTIONS = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-    fetchRealtimeMetrics();
-    bindSearchFilter();
-});
+fetchRealtimeMetrics();
+bindSearchFilter();
 
 async function fetchRealtimeMetrics() {
     const client = getSupabaseClient();
@@ -18,7 +16,7 @@ async function fetchRealtimeMetrics() {
             // Attempt to query live 'cupons_resgatados' table from Supabase
             const { data, error } = await client
                 .from("cupons_resgatados")
-                .select("*")
+                .select("*, ofertas(titulo)")
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
@@ -68,10 +66,10 @@ function renderTableData(items) {
     tableBody.innerHTML = items.map(item => `
         <tr>
             <td><code>${item.code || item.codigo_voucher}</code></td>
-            <td>${item.offer || "Rodízio de Pizzas Temático"}</td>
+            <td>${(item.ofertas && item.ofertas.titulo) || item.offer || "Oferta VIP"}</td>
             <td><strong>R$ ${(parseFloat(item.price || item.preco_promocional) || 94.00).toFixed(2).replace('.', ',')}</strong></td>
             <td><span class="status-tag ${item.status}">${item.status.toUpperCase()}</span></td>
-            <td>${item.created_at || item.data_resgate || "-"}</td>
+            <td>${new Date(item.created_at || item.data_resgate).toLocaleDateString('pt-BR')}</td>
             <td>${item.validated_at || item.data_validacao || "-"}</td>
         </tr>
     `).join("");
