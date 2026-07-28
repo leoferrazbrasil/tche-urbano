@@ -83,28 +83,31 @@ async function loadIntoStudio(videoRecord) {
     document.getElementById('exportBtn').disabled = true;
 
     try {
-        // Cobalt API request to get direct MP4 url
-        const res = await fetch('https://api.cobalt.tools/api/json', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                url: videoRecord.original_url,
-                vQuality: '1080',
-                isNoTTWatermark: true
-            })
-        });
-        const data = await res.json();
+        let videoMp4Url = null;
         
-        if (data.status === 'error' || !data.url) {
-            throw new Error(data.text || 'Cobalt API falhou');
+        try {
+            // Tentativa de usar a API Cobalt (v7 desligada, pode falhar)
+            const res = await fetch('https://api.cobalt.tools/api/json', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: videoRecord.original_url, vQuality: '1080', isNoTTWatermark: true })
+            });
+            const data = await res.json();
+            if (data.status === 'error' || !data.url) throw new Error(data.text);
+            videoMp4Url = data.url;
+        } catch(apiError) {
+            console.warn("API de extração falhou:", apiError);
+            const fallback = prompt("A extração automática falhou (a API gratuita mudou suas políticas de acesso).\n\nPara continuarmos o teste do FFmpeg, vá em snapinsta.app, baixe o link do vídeo, ou cole a URL direta de um .mp4 aqui:");
+            if (fallback && fallback.trim().length > 5) {
+                videoMp4Url = fallback.trim();
+            } else {
+                throw new Error("Nenhum link MP4 fornecido no fallback.");
+            }
         }
 
         // Set video in preview
         const vid = document.getElementById('previewVideo');
-        vid.src = data.url;
+        vid.src = videoMp4Url;
         vid.crossOrigin = 'anonymous';
         vid.load();
         
