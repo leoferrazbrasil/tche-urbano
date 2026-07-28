@@ -13,6 +13,10 @@ export default defineConfig({
       base: '/',
       scope: '/',
       includeAssets: ['favicon.ico', 'assets/img/*'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 50000000, // 50MB
+        globIgnores: ['**/ffmpeg/**'] // Ignorar a pasta do FFmpeg no cache do ServiceWorker
+      },
       manifest: {
         name: 'Tchê Urbano | Clube VIP',
         short_name: 'Tchê Urbano',
