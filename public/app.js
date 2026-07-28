@@ -212,7 +212,7 @@ function renderOffers() {
 // Lógica para gerar o voucher no Supabase e redirecionar
 async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPrice) {
     const originalText = btn.innerHTML;
-    btn.innerHTML = \`<i class="fa-solid fa-circle-notch fa-spin"></i> Gerando...\`;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Gerando...`;
     btn.disabled = true;
 
     const client = getSupabaseClient();
@@ -240,7 +240,8 @@ async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPric
 
         if (error) throw error;
 
-        window.location.href = \`/voucher?code=\${randomCode}&m=\${locationUrl}&t=\${titleUrl}&old=\${oldPrice}&new=\${preco}\`;
+        window.location.href = `/voucher?code=${randomCode}&m=${locationUrl}&t=${titleUrl}&old=${oldPrice}&new=${preco}`;
+        
         
     } catch (error) {
         console.error("Erro ao gerar cupom:", error);
