@@ -5,12 +5,15 @@ var studioSupabase = window.supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SU
 
 var currentVideoData = null;
 var ffmpegInstance = null;
-var createFFmpeg, fetchFile;
+var FFmpegClass = null;
+var fetchFile = null;
 
 try {
-    if (typeof FFmpeg !== 'undefined') {
-        createFFmpeg = FFmpeg.createFFmpeg;
-        fetchFile = FFmpeg.fetchFile;
+    if (typeof FFmpegWASM !== 'undefined') {
+        FFmpegClass = FFmpegWASM.FFmpeg;
+    }
+    if (typeof FFmpegUtil !== 'undefined') {
+        fetchFile = FFmpegUtil.fetchFile;
     }
 } catch(e) {
     console.warn("FFmpeg WASM não carregado:", e);
@@ -149,10 +152,16 @@ async function exportVideo() {
 
     setStatus('Carregando motor FFmpeg (pode demorar na primeira vez)...');
     
-    // Init FFmpeg
+    // Init FFmpeg v0.12
     if (!ffmpegInstance) {
-        ffmpegInstance = createFFmpeg({ log: true });
-        await ffmpegInstance.load();
+        ffmpegInstance = new FFmpegClass();
+        ffmpegInstance.on('log', ({ message }) => {
+            console.log("FFmpeg:", message);
+        });
+        await ffmpegInstance.load({
+            coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+            wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
+        });
     }
     const ffmpeg = ffmpegInstance;
 
@@ -160,7 +169,7 @@ async function exportVideo() {
         setStatus('Baixando vídeo original na memória...');
         // Fetch raw mp4 bytes
         const videoData = await fetchFile(vid.src);
-        ffmpeg.FS('writeFile', 'input.mp4', videoData);
+        await ffmpeg.writeFile('input.mp4', videoData);
 
         setStatus('Gerando camada transparente (Overlay)...');
         // Usar html2canvas no renderTarget (1080x1920 transparente)
@@ -176,21 +185,21 @@ async function exportVideo() {
         // Converte pra PNG Blob
         const pngData = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const pngBytes = await fetchFile(pngData);
-        ffmpeg.FS('writeFile', 'overlay.png', pngBytes);
+        await ffmpeg.writeFile('overlay.png', pngBytes);
 
         setStatus('Renderizando vídeo final (Por favor, aguarde)...');
-        // Comando FFmpeg: coloca o overlay em cima do video. -c:a copy mantém o áudio original intocado
-        await ffmpeg.run(
+        // Comando FFmpeg: coloca o overlay em cima do video.
+        await ffmpeg.exec([
             '-i', 'input.mp4',
             '-i', 'overlay.png',
             '-filter_complex', '[0:v][1:v]overlay=0:0',
             '-c:a', 'copy',
-            '-preset', 'ultrafast', // Rapidez
+            '-preset', 'ultrafast',
             'output.mp4'
-        );
+        ]);
 
         setStatus('Pronto! Iniciando download...');
-        const outData = ffmpeg.FS('readFile', 'output.mp4');
+        const outData = await ffmpeg.readFile('output.mp4');
         const blob = new Blob([outData.buffer], { type: 'video/mp4' });
         const objUrl = URL.createObjectURL(blob);
 
