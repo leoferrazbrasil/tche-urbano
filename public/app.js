@@ -35,6 +35,7 @@ async function loadOffersFromSupabase() {
                 return {
                     id: oferta.id,
                     title: oferta.titulo,
+                    merchant: oferta.parceiros.nome_estabelecimento,
                     city: cityCode,
                     location: `${oferta.parceiros.cidade} • ${oferta.parceiros.bairro_endereco}`,
                     category: oferta.parceiros.categoria,
@@ -199,7 +200,7 @@ function renderOffers() {
                     </div>
                 </div>
 
-                <button onclick="gerarVoucher(this, '${item.id}', '${item.newPrice}', '${encodeURIComponent(item.location)}', '${encodeURIComponent(item.title)}', '${item.oldPrice}')"
+                <button onclick="gerarVoucher(this, '${item.id}', '${item.newPrice}', '${encodeURIComponent(item.location)}', '${encodeURIComponent(item.title)}', '${item.oldPrice}', '${encodeURIComponent(item.merchant)}')"
                    class="btn btn-card-resgate"
                    aria-label="Resgatar cupom para ${item.title}">
                     <i class="fa-solid fa-ticket" aria-hidden="true"></i> Resgatar Voucher VIP (QR Code)
@@ -210,7 +211,7 @@ function renderOffers() {
 }
 
 // Lógica para gerar o voucher no Supabase e redirecionar
-async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPrice) {
+async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPrice, merchantUrl) {
     const originalText = btn.innerHTML;
     btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Gerando...`;
     btn.disabled = true;
@@ -240,7 +241,7 @@ async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPric
 
         if (error) throw error;
 
-        window.location.href = `/voucher?code=${randomCode}&m=${locationUrl}&t=${titleUrl}&old=${oldPrice}&new=${preco}`;
+        window.location.href = `/voucher?code=${randomCode}&m=${merchantUrl}&loc=${locationUrl}&t=${titleUrl}&old=${oldPrice}&new=${preco}`;
         
         
     } catch (error) {
