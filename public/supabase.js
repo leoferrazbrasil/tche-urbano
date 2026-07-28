@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Tchê Urbano & Santa Temporada - Supabase Backend Connection Client
+   Tchê Urbano - Supabase Backend Connection Client
    ========================================================================== */
 
 const SUPABASE_URL = "https://ycpzyuzkainfglljfmbn.supabase.co";

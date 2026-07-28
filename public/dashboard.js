@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Tchê Urbano & Santa Temporada - B2B Dashboard Analytics & Supabase Sync
+   Tchê Urbano - B2B Dashboard Analytics & Supabase Sync
    ========================================================================== */
 
 // Inicializa sem mock.
