@@ -1,4 +1,4 @@
-name: Deploy Tchê Urbano Site to Hostinger
+name: Deploy Tchê Urbano Astro Web App to Hostinger
 
 on:
   push:
@@ -7,16 +7,28 @@ on:
 
 jobs:
   web-deploy:
-    name: Deploy to Hostinger via FTP
+    name: Build Astro Web App & Deploy to Hostinger
     runs-on: ubuntu-latest
     steps:
       - name: Get latest code
         uses: actions/checkout@v4
 
-      - name: Sync files to Hostinger public_html
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Web App with Astro (SSG + PWA)
+        run: npm run build
+
+      - name: Sync compiled dist/ folder to Hostinger public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
           server-dir: /home/u299917777/domains/tcheurbano.com.br/public_html/
