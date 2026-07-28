@@ -1,15 +1,11 @@
 // Inicializar Supabase
-// (Usando as chaves anon já injetadas no site ou hardcoded para o admin)
-const SUPABASE_URL = 'https://ycpzyuzkainfglljfmbn.supabase.co';
-// WARNING: Na vida real usariamos env vars, mas como é static frontend no Admin, vamos com a chave anon
-const SUPABASE_KEY = 'sb_publishable_oodZFeDSVA-Q2wXfa8ZAzQ_O20oTUl0'; // Substitua pela chave anon real se a que eu lembro for outra. Wait, I should fetch it from window or just hardcode the one we used previously in `app.js`.
+var STUDIO_SUPABASE_URL = 'https://ycpzyuzkainfglljfmbn.supabase.co';
+var STUDIO_SUPABASE_KEY = 'sb_publishable_oodZFeDSVA-Q2wXfa8ZAzQ_O20oTUl0';
+var studioSupabase = window.supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SUPABASE_KEY);
 
-// Fallback: we will fetch the key from the env or hardcode the one we know works.
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentVideoData = null;
-let ffmpegInstance = null;
-let createFFmpeg, fetchFile;
+var currentVideoData = null;
+var ffmpegInstance = null;
+var createFFmpeg, fetchFile;
 
 try {
     if (typeof FFmpeg !== 'undefined') {
@@ -27,7 +23,7 @@ try {
 async function loadQueue() {
     const list = document.getElementById('queueList');
     try {
-        const { data, error } = await supabase
+        const { data, error } = await studioSupabase
             .from('viral_videos')
             .select('*')
             .order('created_at', { ascending: false });
@@ -63,7 +59,7 @@ async function addVideo() {
     
     document.getElementById('addBtn').innerText = 'Salvando...';
     try {
-        const { error } = await supabase.from('viral_videos').insert([{ original_url: url, status: 'fila' }]);
+        const { error } = await studioSupabase.from('viral_videos').insert([{ original_url: url, status: 'fila' }]);
         if (error) {
             console.error("Insert error:", error);
             alert("Erro Supabase: " + error.message);
@@ -116,7 +112,7 @@ async function loadIntoStudio(videoRecord) {
         setStatus('Vídeo carregado. Pronto para editar.', 3000);
         
         // Atualiza status no banco
-        supabase.from('viral_videos').update({ status: 'em_edicao' }).eq('id', videoRecord.id).then();
+        studioSupabase.from('viral_videos').update({ status: 'em_edicao' }).eq('id', videoRecord.id).then();
         
     } catch (e) {
         console.error(e);
@@ -200,7 +196,7 @@ async function exportVideo() {
         a.download = `tche_urbano_viral_${Date.now()}.mp4`;
         a.click();
         
-        supabase.from('viral_videos').update({ status: 'finalizado' }).eq('id', currentVideoData.id).then();
+        studioSupabase.from('viral_videos').update({ status: 'finalizado' }).eq('id', currentVideoData.id).then();
         loadQueue();
         setStatus('Download concluído!', 3000);
 
