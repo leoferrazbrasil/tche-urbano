@@ -2,7 +2,6 @@
    Tchê Urbano - Main Application Logic & Data Engine
    ========================================================================== */
 
-// Mock Database of Initial Partner Offers
 let OFFERS_DATA = [];
 
 async function loadOffersFromSupabase() {
@@ -27,22 +26,28 @@ async function loadOffersFromSupabase() {
         if (error) throw error;
         
         if (data && data.length > 0) {
-            // Mapeia para o formato que a interface espera
-            OFFERS_DATA = data.map(oferta => ({
-                id: oferta.id,
-                title: oferta.titulo,
-                city: oferta.parceiros.cidade.toLowerCase(),
-                location: `${oferta.parceiros.cidade} • ${oferta.parceiros.bairro_endereco}`,
-                category: oferta.parceiros.categoria,
-                image: oferta.imagem_url,
-                oldPrice: parseFloat(oferta.preco_original),
-                newPrice: parseFloat(oferta.preco_promocional),
-                discountPercent: oferta.desconto_percent,
-                rating: 5.0, // mock temporário para rating
-                reviewsCount: Math.floor(Math.random() * 200) + 50,
-                popular: oferta.destaque_vip,
-                whatsappText: `Vim pelo site Tchê Urbano! Quero resgatar o cupom da ${oferta.titulo}.`
-            }));
+            OFFERS_DATA = data.map(oferta => {
+                const cidadeBd = oferta.parceiros.cidade.toLowerCase();
+                let cityCode = cidadeBd;
+                if (cidadeBd.includes('porto alegre')) cityCode = 'poa';
+                if (cidadeBd.includes('gramado') || cidadeBd.includes('canela')) cityCode = 'gramado';
+
+                return {
+                    id: oferta.id,
+                    title: oferta.titulo,
+                    city: cityCode,
+                    location: `${oferta.parceiros.cidade} • ${oferta.parceiros.bairro_endereco}`,
+                    category: oferta.parceiros.categoria,
+                    image: oferta.imagem_url,
+                    oldPrice: parseFloat(oferta.preco_original),
+                    newPrice: parseFloat(oferta.preco_promocional),
+                    discountPercent: oferta.desconto_percent,
+                    rating: 5.0, // mock temporário para rating
+                    reviewsCount: Math.floor(Math.random() * 200) + 50,
+                    popular: oferta.destaque_vip,
+                    whatsappText: `Vim pelo site Tchê Urbano! Quero resgatar o cupom da ${oferta.titulo}.`
+                };
+            });
         }
     } catch (error) {
         console.error("Erro ao carregar ofertas:", error);
@@ -204,43 +209,42 @@ function renderOffers() {
     `).join("");
 }
 
-
-// L�gica para gerar o voucher no Supabase e redirecionar
+// Lógica para gerar o voucher no Supabase e redirecionar
 async function gerarVoucher(btn, ofertaId, preco, locationUrl, titleUrl, oldPrice) {
     const originalText = btn.innerHTML;
-    btn.innerHTML = <i class=fa-solid fa-circle-notch fa-spin></i> Gerando...;
+    btn.innerHTML = \`<i class="fa-solid fa-circle-notch fa-spin"></i> Gerando...\`;
     btn.disabled = true;
 
     const client = getSupabaseClient();
     if (!client) {
-        alert(Erro de conex�o com o servidor. Tente novamente.);
+        alert("Erro de conexão com o servidor. Tente novamente.");
         btn.innerHTML = originalText;
         btn.disabled = false;
         return;
     }
 
-    const randomCode = TCHE- + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const randomCode = 'TCHE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
     try {
         const { data, error } = await client
-            .from(cupons_resgatados)
+            .from('cupons_resgatados')
             .insert([
                 {
                     oferta_id: ofertaId,
                     codigo_voucher: randomCode,
                     price: parseFloat(preco),
-                    status: gerado
+                    status: 'gerado'
                 }
             ])
             .select();
 
         if (error) throw error;
 
-        window.location.href = /voucher?code=&m=&t=&old=&new=;
+        window.location.href = \`/voucher?code=\${randomCode}&m=\${locationUrl}&t=\${titleUrl}&old=\${oldPrice}&new=\${preco}\`;
         
     } catch (error) {
-        console.error(Erro ao gerar cupom:, error);
-        alert(N�o foi poss�vel gerar seu voucher agora. Tente novamente.);
+        console.error("Erro ao gerar cupom:", error);
+        alert("Não foi possível gerar seu voucher agora. Tente novamente.");
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
