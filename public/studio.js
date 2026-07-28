@@ -7,7 +7,6 @@ var currentVideoData = null;
 var ffmpegInstance = null;
 var FFmpegClass = null;
 var fetchFile = null;
-var toBlobURL = null;
 
 try {
     if (typeof FFmpegWASM !== 'undefined') {
@@ -15,7 +14,6 @@ try {
     }
     if (typeof FFmpegUtil !== 'undefined') {
         fetchFile = FFmpegUtil.fetchFile;
-        toBlobURL = FFmpegUtil.toBlobURL;
     }
 } catch(e) {
     console.warn("FFmpeg WASM não carregado:", e);
@@ -143,12 +141,9 @@ async function loadIntoStudio(videoRecord) {
             }
         }
 
-        // Contornar bloqueios de CORS para o vídeo externo
-        const corsVideoUrl = 'https://corsproxy.io/?' + encodeURIComponent(videoMp4Url);
-
         // Set video in preview
         const vid = document.getElementById('previewVideo');
-        vid.src = corsVideoUrl;
+        vid.src = videoMp4Url;
         vid.crossOrigin = 'anonymous';
         vid.load();
         
@@ -190,20 +185,17 @@ async function exportVideo() {
 
     setStatus('Carregando motor FFmpeg (pode demorar na primeira vez)...');
     
-    // Init FFmpeg v0.12
+    // Init FFmpeg v0.12 (Local Files)
     if (!ffmpegInstance) {
         ffmpegInstance = new FFmpegClass();
         ffmpegInstance.on('log', ({ message }) => {
             console.log("FFmpeg:", message);
         });
         
-        const coreBase = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-        const ffmpegBase = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd';
-        
         await ffmpegInstance.load({
-            coreURL: await toBlobURL(`${coreBase}/ffmpeg-core.js`, 'text/javascript'),
-            wasmURL: await toBlobURL(`${coreBase}/ffmpeg-core.wasm`, 'application/wasm'),
-            workerURL: await toBlobURL(`${ffmpegBase}/814.ffmpeg.js`, 'text/javascript')
+            coreURL: '/ffmpeg/ffmpeg-core.js',
+            wasmURL: '/ffmpeg/ffmpeg-core.wasm',
+            workerURL: '/ffmpeg/814.ffmpeg.js'
         });
     }
     const ffmpeg = ffmpegInstance;
