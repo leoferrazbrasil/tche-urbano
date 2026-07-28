@@ -255,7 +255,7 @@ function renderOffers() {
                     </div>
                 </div>
 
-                <a href="voucher.html?code=${item.id.toUpperCase()}&m=${encodeURIComponent(item.location)}&t=${encodeURIComponent(item.title)}&old=${item.oldPrice}&new=${item.newPrice}"
+                <a href="/voucher?code=${item.id.toUpperCase()}&m=${encodeURIComponent(item.location)}&t=${encodeURIComponent(item.title)}&old=${item.oldPrice}&new=${item.newPrice}"
                    target="_blank"
                    rel="noopener"
                    class="btn btn-card-resgate"

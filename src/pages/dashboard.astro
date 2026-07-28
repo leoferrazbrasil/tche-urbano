@@ -16,10 +16,10 @@
     
     <!-- Supabase JS Client SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase.js"></script>
+    <script is:inline src="/supabase.js"></script>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <style>
         .dashboard-body {
             background: #F8F6F2;
@@ -223,7 +223,7 @@
     <!-- Header / Navbar -->
     <header class="navbar">
         <div class="container nav-container">
-            <a href="index.html" class="brand-logo">
+            <a href="/" class="brand-logo">
                 <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
                 <span class="badge-beta">DASHBOARD SUPABASE B2B</span>
             </a>
@@ -231,7 +231,7 @@
                 <div class="merchant-pill-badge" id="merchantBadge">
                     <i class="fa-solid fa-shop text-primary"></i> <span id="lblMerchantName">Toca da Bruxa Canela</span>
                 </div>
-                <a href="validar.html" class="btn btn-primary" style="font-size: 0.85rem;"><i class="fa-solid fa-qrcode"></i> Leitor QR Code</a>
+                <a href="/validar" class="btn btn-primary" style="font-size: 0.85rem;"><i class="fa-solid fa-qrcode"></i> Leitor QR Code</a>
             </div>
         </div>
     </header>
@@ -337,6 +337,6 @@
     </footer>
 
     <!-- Dashboard Logic Script -->
-    <script src="dashboard.js"></script>
+    <script is:inline src="/dashboard.js"></script>
 </body>
 </html>

@@ -18,7 +18,7 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <style>
         .validator-container {
             max-width: 500px;
@@ -111,12 +111,12 @@
     <!-- Header / Navbar -->
     <header class="navbar" role="banner">
         <div class="container nav-container">
-            <a href="index.html" class="brand-logo" aria-label="Tchê Urbano Página Inicial">
+            <a href="/" class="brand-logo" aria-label="Tchê Urbano Página Inicial">
                 <img src="assets/img/logo-tche-urbano.png" alt="Tchê Urbano" class="logo-img">
                 <span class="badge-beta">LEITOR DE QR CODE</span>
             </a>
             <div class="nav-actions">
-                <a href="parceiro.html" class="btn btn-secondary" style="font-size: 0.85rem;">Painel do Parceiro</a>
+                <a href="/parceiro" class="btn btn-secondary" style="font-size: 0.85rem;">Painel do Parceiro</a>
             </div>
         </div>
     </header>
@@ -158,6 +158,6 @@
     </footer>
 
     <!-- Script -->
-    <script src="validar.js"></script>
+    <script is:inline src="/validar.js"></script>
 </body>
 </html>
