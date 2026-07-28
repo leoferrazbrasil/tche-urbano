@@ -43,10 +43,30 @@ async function loadQueue() {
 
         data.forEach(video => {
             const el = document.createElement('div');
-            el.className = 'video-card';
+            el.className = 'video-card ' + video.status;
+            
+            // Format status
+            let statusText = 'Na Fila';
+            let icon = 'fa-clock';
+            let statusColor = '#aaa';
+            if (video.status === 'em_edicao') {
+                statusText = 'Em Edição';
+                icon = 'fa-spinner fa-spin';
+                statusColor = '#f39c12';
+            } else if (video.status === 'finalizado') {
+                statusText = 'Finalizado';
+                icon = 'fa-check-circle';
+                statusColor = '#2ecc71';
+            }
+
             el.innerHTML = `
-                <div style="font-size:12px; color:gray; word-break: break-all; margin-bottom: 5px;">${video.original_url.substring(0,40)}...</div>
-                <div style="font-size:14px; font-weight:bold; color: #FAF6F1;">Status: ${video.status}</div>
+                <div class="video-info">
+                    <i class="fa-brands fa-instagram" style="font-size:18px; color:#E1306C;"></i>
+                    <div class="video-url">${video.original_url.substring(0, 30)}...</div>
+                </div>
+                <div class="video-status" style="color: ${statusColor};">
+                    <i class="fa-solid ${icon}"></i> ${statusText}
+                </div>
             `;
             el.onclick = () => loadIntoStudio(video);
             list.appendChild(el);
@@ -62,7 +82,10 @@ async function addVideo() {
     const url = input.value.trim();
     if (!url) return;
     
-    document.getElementById('addBtn').innerText = 'Salvando...';
+    const btn = document.getElementById('addBtn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+    btn.disabled = true;
+    
     try {
         const { error } = await studioSupabase.from('viral_videos').insert([{ original_url: url, status: 'fila' }]);
         if (error) {
@@ -71,11 +94,21 @@ async function addVideo() {
             throw error;
         }
         input.value = '';
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Salvo com Sucesso!';
+        btn.style.backgroundColor = '#2ecc71';
+        
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i> Salvar na Fila';
+            btn.style.backgroundColor = '';
+            btn.disabled = false;
+        }, 2000);
+
         await loadQueue();
     } catch (e) {
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i> Salvar na Fila';
+        btn.disabled = false;
         alert('Erro ao salvar no Supabase. Veja o console.');
     }
-    document.getElementById('addBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Salvar na Fila';
 }
 
 // ==========================================

@@ -91,9 +91,33 @@
             border: 1px solid #444;
             cursor: pointer;
             transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .video-card:hover { border-color: var(--color-primary); }
-
+        .video-card:hover { border-color: var(--color-primary); background: #3a3a3a; transform: translateY(-2px); }
+        
+        .video-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .video-url {
+            font-size: 13px;
+            color: #ddd;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        
+        .video-status {
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
         /* Main Workspace */
         .workspace {
             flex: 1;
@@ -228,6 +252,6 @@
         <div class="headline" id="renderTextDisplay">Digite seu texto aqui</div>
     </div>
 
-    <script is:inline src="/studio.js?v=6"></script>
+    <script is:inline src="/studio.js?v=7"></script>
 </body>
 </html>
