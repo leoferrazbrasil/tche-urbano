@@ -223,11 +223,13 @@ async function exportVideo() {
         await ffmpeg.writeFile('overlay.png', pngBytes);
 
         setStatus('Renderizando vídeo final (Por favor, aguarde)...');
-        // Comando FFmpeg: coloca o overlay em cima do video.
+        // Comando FFmpeg: 
+        // 1. Pega o video original [0:v], redimensiona para cobrir 1080x1920, e corta o centro para ficar exato 9:16 [bg]
+        // 2. Coloca o overlay.png [1:v] em cima do [bg]
         await ffmpeg.exec([
             '-i', 'input.mp4',
             '-i', 'overlay.png',
-            '-filter_complex', '[0:v][1:v]overlay=0:0',
+            '-filter_complex', '[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg];[bg][1:v]overlay=0:0',
             '-c:a', 'copy',
             '-preset', 'ultrafast',
             'output.mp4'
